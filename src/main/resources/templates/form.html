@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ko"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{common/layout/default}">
+		
+<th:block layout:fragment="content">
+	<script th:inline="javascript">
+	
+		/*<![CDATA[*/
+		
+		$(document).ready(function() {
+			
+			total = 1;
+			
+			$(document).on("click", "button[name^='delete']", function() {
+				
+				currentNum = $(this).attr('name').replace(/[^0-9]/g, "");
+				
+				$("#account" + currentNum).remove();
+				
+				for (i = currentNum; i < total; i++) {
+					
+					newNum = i - 1
+					newName = 'users[' + newNum + ']'
+					
+					if ($('#account' + newNum).length) continue; 
+					
+					$('#account' + i).attr('id', 'account' + newNum);
+					$('input[name="users[' + i + '].name"]').attr('name', newName + '.name');
+					$('input[name="users[' + i + '].id"]').attr('name', newName + '.id');
+					$('input[name="users[' + i + '].email"]').attr('name', newName + '.email');
+					$('input[name="users[' + i + '].company"]').attr('name', newName + '.company');
+					$('input[name="users[' + i + '].isAdmin"]').attr('name', newName + '.isAdmin');
+					
+					$('input[name="users[' + i + '].services"]').attr('name', newName + '.services');
+					$('input[name="users[' + i + '].sonarqubeGroups"]').attr('name', newName + '.sonarqubeGroups');
+					
+					$('button[name="delete' + i + '"]').attr('name', 'delete' + newNum);
+					
+				}
+				
+				if (total > 1) total--;
+			});
+			
+			
+			$(document).on("click", "button[name='add']", function() {
+				newDiv = '<div id="account' + total + '" class="row py-3 border-top">'
+							+ $("#account0").html().replaceAll("[0]", "[" + total + "]")
+							+ '<div class="col-md-1"><button name="delete' + total + '" class="btn btn-secondary w-100 h-100">Delete</button></div>'
+						+ '</div>';
+				$("#info").append(newDiv)
+				total++;
+			});
+			
+			$(document).on("click", "input[name$='isAdmin']", function() {
+				currentNum = $(this).attr('name').replace(/[^0-9]/g, "");
+				console.log("test");
+				if ($(this).is(':checked')) {
+					$("input[name='users[" + currentNum + "].sonarqubeGroups']:checkbox").prop('checked',false);
+				}
+			});
+			
+			$(document).on("click", "input[name$='sonarqubeGroups']", function() {
+				currentNum = $(this).attr('name').replace(/[^0-9]/g, "");
+				console.log("test2");
+				if ($(this).is(':checked')) {
+					$("input[name='users[" + currentNum + "].isAdmin']:checkbox").prop('checked',false);
+				}
+			});
+		});
+		
+		/*]]>*/
+		
+	</script>
+	<form th:action="@{/user/create}" method="post">
+		<button name="add" class="btn btn-info btn-block">Add Account</button>
+		<div id="info">
+			<div id="account0" class="row py-3">
+				<div class="col-md-3 pt-2">
+					<input type="text" name="users[0].name" placeholder="name" required="required" class="form-control" />
+					<input type="text" name="users[0].id" placeholder="id" required="required" class="form-control" /> 
+					<input type="email" name="users[0].email" placeholder="email" required="required" class="form-control" /> 
+					<input type="text" name="users[0].company" placeholder="department" required="required" class="form-control" />
+					<div class="form-check pb-2">
+						<label class="form-check-label"><input type="checkbox" name="users[0].isAdmin" class="form-check-input">admin</label>
+      				</div>		
+				</div>
+				<div class="col-md-2 pt-2">
+					<b>Services</b>					
+					<div class="form-check">
+						<label class="form-check-label"><input type="checkbox" name="users[0].services" value="sonarqube" class="form-check-input" checked>SonarQube</label>
+      				</div>
+      				<div class="form-check">
+						<label class="form-check-label"><input type="checkbox" name="users[0].services" value="nexus" class="form-check-input" checked>Nexus</label>
+      				</div>
+      				<div class="form-check">
+						<label class="form-check-label"><input type="checkbox" name="users[0].services" value="opensearch" class="form-check-input" checked>Opensearch</label>
+      				</div>
+				</div>
+				<div class="col-md-3 pt-2">
+					<b>SonarQube admin groups</b>
+					<div class="form-check" th:each="group : ${sonarqubeGroups}" th:if="${#strings.startsWith(group.name, 'admin')}">
+						<label class="form-check-label"><input type="checkbox" name="users[0].sonarqubeGroups" class="form-check-input" th:text="${group.name}" th:value="${group.name}"></label>
+      				</div>
+				</div>
+				<div class="col-md-3 pt-2">
+      				<b>SonarQube user groups</b>
+      				<div class="form-check" th:each="group : ${sonarqubeGroups}" th:if="${!#strings.startsWith(group.name, 'admin')}">
+						<label class="form-check-label"><input type="checkbox" name="users[0].sonarqubeGroups" class="form-check-input" th:text="${group.name}" th:value="${group.name}"></label>
+      				</div>
+				</div>
+			</div>
+		</div>
+		<button id="submitBtn" type="submit" class="btn btn-primary btn-block">Create Account</button>
+	</form>
+</th:block>
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ko"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{common/layout/default}">
+		
+<th:block layout:fragment="content">
+	<div class="table-responsive">
+		<table class="table table-hover">
+			<thead>
+				<tr>
+					<th scope="col">ID</th>
+					<th scope="col">Name</th>
+					<th scope="col">Email</th>
+					<th scope="col">Group</th>
+					<th scope="col">Last Activity</th>
+					<th scope="col"></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="user : ${userList}">
+					<th class="align-middle" scope="row" th:text="${user.id}"></th>
+					<td class="align-middle" th:text="${user.name}"></td>
+					<td class="align-middle" th:text="${user.email}"></td>
+					<td class="align-middle">
+						<ul class="list-group" th:each="group : ${user.groups}">
+							<li class="list-group-item" th:text="${group}"></li>
+						</ul>
+					</td>
+					<td class="align-middle" th:text="${user.lastConnectionDate} == null ? 'Never' : ${#dates.format(user.lastConnectionDate, 'yyyy.MM.dd HH:mm:ss')}"></td>
+					<td class="align-middle"><button class="btn-sm btn-info" th:if="${!#lists.contains(user.groups, 'sonar-administrators')}" th:onclick="|if(confirm('Are you sure you want to delete the account?')) location.href='/@{${service}}/user/delete?id=@{${user.id}}'|">Delete</button></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</th:block>
+</html>

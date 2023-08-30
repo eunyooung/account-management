@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ko"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{common/layout/default}">
+		
+<th:block layout:fragment="content">
+
+	<script th:inline="javascript">
+	
+		/*<![CDATA[*/
+		
+		function getProjectPermission(projectKey) {
+			
+			$.ajax({
+		        type: "GET",
+		        url: "/sonarqube/permission/list?projectKey=" + projectKey,
+		        dataType: "json",
+		        success: function(res) {
+		        	
+					body = "";
+					
+					for (i = 0; i < res.length; i++) {
+						
+						permissions = res[i].permissions;
+						body += '<tr>'
+							+ '		<td scope="row">' + res[i].name + '</td>'
+							+ '		<td>' + (permissions.includes('user') ? "O" : "X") + '</td>'
+							+ '		<td>' + (permissions.includes('codeviewer') ? "O" : "X") + '</td>'
+							+ '		<td>' + (permissions.includes('issueadmin') ? "O" : "X") + '</td>'
+							+ '		<td>' + (permissions.includes('securityhotspotadmin') ? "O" : "X") + '</td>'
+							+ '		<td>' + (permissions.includes('admin') ? "O" : "X") + '</td>'
+							+ '		<td>' + (permissions.includes('scan') ? "O" : "X") + '</td>'
+							+ '</tr>';
+					}
+					$("#permission-list").html(body);
+					$("#modal-title").text(projectKey + " Role Information")
+				}
+			});
+		}
+		
+		/*]]>*/
+		
+	</script>
+	
+	<div class="table-responsive">
+		<table class="table table-hover">
+			<thead>
+				<tr>
+					<th scope="col">Project</th>
+					<th scope="col"></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="project : ${projectList}">
+					<th class="align-middle" scope="row" th:text="${project.key}"></th>
+					<td class="align-middle"><button href="" class="list-group-item list-group-item-action" data-toggle="modal" data-target="#modalCenter" th:attr="onclick=|getProjectPermission('${project.key}')|">Role</button></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	
+	
+	<div class="modal fade" id="modalCenter" tabindex="-1" role="dialog" aria-labelledby="modalCenterTitle" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="modal-title"></h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<table class="table table-bordered">
+						<thead>
+							<tr>
+								<th scope="col">Group</th>
+								<th scope="col">User</th>
+								<th scope="col">Code Viewer</th>
+								<th scope="col">Issue Admin</th>
+								<th scope="col">Security Admin</th>
+								<th scope="col">Admin</th>
+								<th scope="col">Scan</th>
+							</tr>
+						</thead>
+						<tbody id = "permission-list">
+						</tbody>
+					</table>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</th:block>
+</html>

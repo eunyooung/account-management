@@ -1,0 +1,30 @@
+logging:
+  level:
+    org:
+      springframework:
+        core:
+          LocalVariableTableParameterNameDiscoverer: error
+
+sonarqube:
+  url: 
+  id: 
+  password: 
+  group:
+    admin: 
+    exclude: 
+    
+nexus:
+  url: 
+  id: 
+  password: 
+  role:
+    admin: 
+    user: 
+
+opensearch:
+  url: 
+  id: 
+  password: 
+  role:
+    admin: 
+    user: 

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" th:fragment="header">
+	<nav class="navbar navbar-expand-lg bg-dark navbar-dark">
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="collapsibleNavbar">
+		    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+		      <li th:attr="class=${service == 'form' ? 'nav-item active' : 'nav-item'}">
+		        <a th:attr="class=nav-link" th:href="@{/form}">Create</a>
+		      </li>
+		      <li class="nav-item dropdown">
+		      	<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Sonarqube</a>
+	      		<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+	      			<a th:attr="class=dropdown-item" th:href="@{/sonarqube/user/list}">Accounts</a>
+	      			<a th:attr="class=dropdown-item" th:href="@{/sonarqube/project/list}">Projects</a>
+	      			
+	      		</div>
+		      </li>
+		      <li th:attr="class=${service == 'nexus' ? 'nav-item active' : 'nav-item'}">
+		        <a th:attr="class=nav-link" th:href="@{/nexus/user/list}">Nexus</a>
+		      </li>
+		      <li th:attr="class=${service == 'dev-opensearch' ? 'nav-item active' : 'nav-item'}">
+		        <a th:attr="class=nav-link" th:href="@{/opensearch/user/list}">Opensearch</a>
+		      </li>
+		    </ul>
+		    <form class="form-inline my-2 my-lg-0" th:action="@{/search}" method="get">
+		      <input class="form-control mr-sm-2" type="search" name="id" placeholder="search account" required>
+		      <button class="btn btn-info my-2 my-sm-0" type="submit">Search</button>
+		    </form>
+		</div>  
+	</nav>
+</html>

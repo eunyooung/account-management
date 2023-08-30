@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ko"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{common/layout/default}">
+		
+<th:block layout:fragment="content">
+	<div class="table-responsive">
+		<table class="table table-hover">
+			<thead>
+				<tr>
+					<th scope="col">Service</th>
+					<th scope="col">ID</th>
+					<th scope="col">Name</th>
+					<th scope="col">Email</th>
+					<th scope="col">Group/Role</th>
+					<th scope="col"></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="sonarUser : ${sonarUserList}">
+					<th class="align-middle" scope="row">Sonarqube</th>
+					<td class="align-middle" th:text="${sonarUser.id}"></td>
+					<td class="align-middle" th:text="${sonarUser.name}"></td>
+					<td class="align-middle" th:text="${sonarUser.email}"></td>
+					<td class="align-middle">
+						<ul class="list-group" th:each="sonarGroup : ${sonarUser.groups}">
+							<li class="list-group-item" th:text="${sonarGroup}"></li>
+						</ul>
+					</td>
+					<td class="align-middle"><button class="btn-sm btn-info" th:if="${!#lists.contains(sonarUser.groups, 'sonar-administrators')}" th:onclick="|if(confirm('Are you sure you want to delete the account?')) location.href='/sonarqube/user/delete?id=@{${sonarUser.id}}&search=true'|">Delete</button></td>
+				</tr>
+				<tr th:each="nexusUser : ${nexusUserList}">
+					<th class="align-middle" scope="row">Nexus</th>
+					<td class="align-middle" scope="row" th:text="${nexusUser.id}"></td>
+					<td class="align-middle" th:text="${nexusUser.firstName} + ' ' + ${nexusUser.lastName}"></td>
+					<td class="align-middle" th:text="${nexusUser.email}"></td>
+					<td class="align-middle">
+						<ul class="list-group" th:each="nexusRole : ${nexusUser.roles}">
+							<li class="list-group-item" th:text="${nexusRole}"></li>
+						</ul>
+					</td>
+					<td class="align-middle"><button class="btn-sm btn-info" th:if="${!#lists.contains(nexusUser.roles, 'nx-admin')}"  th:onclick="|if(confirm('Are you sure you want to delete the account?')) location.href='/nexus/user/delete?id=@{${nexusUser.id}}&search=true'|">Delete</button>
+				</tr>
+				<tr th:each="opensearchUser : ${opensearchUserList}">
+					<th class="align-middle" scope="row">Opensearch</th>
+					<td class="align-middle" scope="row" th:text="${opensearchUser.key}"></td>
+					<td class="align-middle" th:text="${opensearchUser.value.attributes.name} + ' (' + ${opensearchUser.value.attributes.company} + ')'"></td>
+					<td class="align-middle" th:text="${opensearchUser.value.attributes.email}"></td>
+					<td class="align-middle">
+						<ul class="list-group" th:each="role : ${opensearchUser.value.roles}">
+							<li class="list-group-item" th:text="${role}"></li>
+						</ul>
+					</td>
+					<td class="align-middle"><button class="btn-sm btn-info" th:if="${!#lists.contains(opensearchUser.value.roles, 'all_access')}" th:onclick="|if(confirm('Are you sure you want to delete the account?')) location.href='/opensearch/user/delete?id=@{${opensearchUser.key}}&search=true'|">Delete</button>
+				</tr>				
+			</tbody>
+		</table>
+	</div>
+</th:block>
+</html>
